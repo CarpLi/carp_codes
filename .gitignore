@@ -4,3 +4,16 @@
 
 /CPP_C++11/.vs/CPP_C++11/v15/Browse.VC.db
 *.opendb
+CPP_C++11/.vs/CPP_C++11/v15/.suo
+CPP_C++11/.vs/CPP_C++11/v15/ipch/AutoPCH/7b012a12dd508ab0/LAMBDA_EXPRESSIONS.ipch
+CPP_C++11/.vs/CPP_C++11/v15/ipch/AutoPCH/96837ee759ddf990/LAMBDA_FUNCTION.ipch
+*.db
+*.db-shm
+*.db-wal
+*.pdb
+*.tlog
+*.idb
+*.log
+*.obj
+*.ilk
+*.exe
