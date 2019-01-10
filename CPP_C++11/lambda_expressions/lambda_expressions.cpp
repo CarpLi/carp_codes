@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <set>
 using namespace std;
 
 // LAMBDA FUNCTION
@@ -88,6 +89,61 @@ void FUNCTION_LAMBDA()
 // 标准库应用
 namespace STL_LAMBDA 
 {
+  struct Person
+  {
+    //// 错误 error C2678: 二进制“<”: 没有找到接受“const card”类型的左操作数的运算符(或没有可接受的转换)
+    //bool operator <(const Person &rhs) {
+    //  return this->firstname < rhs.firstname || (this->firstname == rhs.firstname && this->lastname < rhs.lastname);
+    //}
+
+    bool operator <(const Person &rhs) const {
+      return this->firstname < rhs.firstname || (this->firstname == rhs.firstname && this->lastname < rhs.lastname);
+    }
+
+    Person(int first, int last) :firstname(first), lastname(last) {
+    }
+
+    friend ostream& operator<< (ostream& os, const Person& person) {
+      os << person.firstname << ' ' << person.lastname << endl;
+      return os;
+    }
+
+    friend istream& operator>> (istream& is, Person& person) {
+      is >> person.firstname >> person.lastname;
+      return is;
+    }
+
+    Person() = default;
+
+    int firstname;
+    int lastname;
+  };
+
+  struct  Student
+  {
+    bool operator<(const Student &rhs) const {
+      return this->id < rhs.id;
+    }
+
+    friend  ostream& operator<< (ostream& os, const Student& student) {
+      os << student.id << ' ' << student.age << endl;
+      return os;
+    }
+
+    friend istream& operator>> (istream& is, Student& student) {
+      is >> student.id >> student.age;
+      return is;
+    }
+
+    Student(int _id, int _age) :id(_id), age(_id) {
+    }
+
+    Student() = default;
+
+    int id;
+    int age;
+  };
+
   class Compare {
   public:
     Compare() = default;
@@ -103,6 +159,16 @@ namespace STL_LAMBDA
     bool operator()(int a) {
       return (a > _m) && (a < _n);
     }
+
+	// 比较人类
+	bool operator()(const Person &p1, const Person &p2) const {
+		return (p1.firstname < p2.firstname) || (p1.firstname == p2.firstname && p1.lastname < p2.lastname);
+	}
+
+	// 比较学生
+	bool operator()(const Student &s1, const Student &s2) const {
+		return s1.id < s2.id;
+	}
 
   private:
     int _m;
@@ -121,7 +187,8 @@ namespace STL_LAMBDA
     vector<int> iiivec(vec);
     vector<int> vvec(vec);
 
-    for (auto  i : vec) { cout << i << ' '; }
+    cout << "pass a lambda as hash function or ordering or sort criterion to sequence container" << endl;
+    for (auto i : vec) { cout << i << ' '; }
     cout << endl;
 
     // first way
@@ -145,7 +212,7 @@ namespace STL_LAMBDA
     int x = 4;
     int y = 6;
     iiivec.erase(remove_if(iiivec.begin(), iiivec.end(), [x, y](int a) {return (a > x) && (a < y); }),
-                 iiivec.end());
+      iiivec.end());
     for (auto i : iiivec) { cout << i << ' '; }
     cout << endl;
 
@@ -153,6 +220,28 @@ namespace STL_LAMBDA
     for (auto i : iiivec) { cout << i << ' '; }
     cout << endl;
 
+    cout << "pass a lambda as hash function or ordering or sort criterion to associative or unordered container" << endl;
+    // first way
+    Person p1(1, 1);
+    Person p2(2, 2);
+    Person p3(3, 3);
+    Person p4(4, 4);
+    set<Person> s_default{ p4,p3,p2,p1 };
+    for (auto s : s_default) {
+      cout << s;
+    }
+
+    // second way: 必须要如此定义才可以
+    // bool operator()(const Person &p1, const Person &p2) const
+    set<Person, Compare> s_user;
+    s_user.insert(p4);
+    s_user.insert(p3);
+    s_user.insert(p2);
+    s_user.insert(p1);
+    for (auto s : s_user)
+    {
+      cout << s;
+    }
   }
 }
 
