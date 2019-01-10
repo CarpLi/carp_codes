@@ -152,23 +152,23 @@ namespace STL_LAMBDA
 
     // 大小比较
     bool operator()(int a, int b) {
-      return a < b;
+    return a < b;
     }
 
     // 范围比较
     bool operator()(int a) {
-      return (a > _m) && (a < _n);
+    return (a > _m) && (a < _n);
     }
 
-	// 比较人类
-	bool operator()(const Person &p1, const Person &p2) const {
-		return (p1.firstname < p2.firstname) || (p1.firstname == p2.firstname && p1.lastname < p2.lastname);
-	}
+    // 比较人类
+    bool operator()(const Person &p1, const Person &p2) const {
+    return (p1.firstname < p2.firstname) || (p1.firstname == p2.firstname && p1.lastname < p2.lastname);
+    }
 
-	// 比较学生
-	bool operator()(const Student &s1, const Student &s2) const {
-		return s1.id < s2.id;
-	}
+    // 比较学生
+    bool operator()(const Student &s1, const Student &s2) const {
+    return s1.id < s2.id;
+    }
 
   private:
     int _m;
