@@ -91,6 +91,10 @@ namespace STL_LAMBDA
 {
   struct Person
   {
+    Person() = default;
+    Person(int first, int last) :firstname(first), lastname(last) {
+    }
+
     //// 错误 error C2678: 二进制“<”: 没有找到接受“const card”类型的左操作数的运算符(或没有可接受的转换)
     //bool operator <(const Person &rhs) {
     //  return this->firstname < rhs.firstname || (this->firstname == rhs.firstname && this->lastname < rhs.lastname);
@@ -98,9 +102,6 @@ namespace STL_LAMBDA
 
     bool operator <(const Person &rhs) const {
       return this->firstname < rhs.firstname || (this->firstname == rhs.firstname && this->lastname < rhs.lastname);
-    }
-
-    Person(int first, int last) :firstname(first), lastname(last) {
     }
 
     friend ostream& operator<< (ostream& os, const Person& person) {
@@ -113,14 +114,16 @@ namespace STL_LAMBDA
       return is;
     }
 
-    Person() = default;
-
     int firstname;
     int lastname;
   };
 
   struct  Student
   {
+    Student() = default;
+    Student(int _id, int _age) :id(_id), age(_id) {
+    }
+
     bool operator<(const Student &rhs) const {
       return this->id < rhs.id;
     }
@@ -135,39 +138,37 @@ namespace STL_LAMBDA
       return is;
     }
 
-    Student(int _id, int _age) :id(_id), age(_id) {
-    }
-
-    Student() = default;
-
     int id;
     int age;
   };
 
+  // 通用比较类
+  // case 1： 可用于进行范围比较
+  // case 2： 可用于进行两个数值大小比较
   class Compare {
   public:
     Compare() = default;
     Compare(int pre, int post) : _m(pre), _n(post){
     }
 
-    // 大小比较
+    // 两个数值进行大小比较
     bool operator()(int a, int b) {
-    return a < b;
+      return a < b;
     }
 
-    // 范围比较
+    // 给定单独一个数值进行范围比较
     bool operator()(int a) {
-    return (a > _m) && (a < _n);
+      return (a > _m) && (a < _n);
     }
 
     // 比较人类
     bool operator()(const Person &p1, const Person &p2) const {
-    return (p1.firstname < p2.firstname) || (p1.firstname == p2.firstname && p1.lastname < p2.lastname);
+      return (p1.firstname < p2.firstname) || (p1.firstname == p2.firstname && p1.lastname < p2.lastname);
     }
 
     // 比较学生
     bool operator()(const Student &s1, const Student &s2) const {
-    return s1.id < s2.id;
+      return s1.id < s2.id;
     }
 
   private:
@@ -175,6 +176,7 @@ namespace STL_LAMBDA
     int _n;
   };
 
+  // 比较函数
   bool compare(int a, int b) {
     return a < b;
   }
@@ -191,17 +193,17 @@ namespace STL_LAMBDA
     for (auto i : vec) { cout << i << ' '; }
     cout << endl;
 
-    // first way
+    // first way: pass function 
     sort(vec.begin(), vec.end(), compare);
     for (auto i : vec) { cout << i << ' '; }
     cout << endl;
 
-    // second way
+    // second way: pass function object
     sort(ivec.begin(), ivec.end(), Compare());
     for (auto i : ivec) { cout << i << ' '; }
     cout << endl;
 
-    // third way
+    // third way: pass lambda object
     sort(iivec.begin(), iivec.end(), [](int a, int b)->bool {return a < b; });
     for (auto i : iivec) { cout << i << ' '; }
     cout << endl;
@@ -211,11 +213,17 @@ namespace STL_LAMBDA
     // string 删除指定数值的字符
     int x = 4;
     int y = 6;
-    iiivec.erase(remove_if(iiivec.begin(), iiivec.end(), [x, y](int a) {return (a > x) && (a < y); }),
-      iiivec.end());
+    iiivec.erase(remove_if(iiivec.begin(), iiivec.end(), [x, y](int a) {return (a > x) && (a < y); }), iiivec.end());
     for (auto i : iiivec) { cout << i << ' '; }
     cout << endl;
 
+    /*
+      remove_if()并不会实际移除序列[start, end)中的元素; 
+      如果在一个容器上应用remove_if(), 容器的长度并不会改变(remove_if()不可能仅通过迭代器改变容器的属性), 所有的元素都还在容器里面。
+      实际做法是, remove_if()将所有应该移除的元素都移动到了容器尾部并返回一个分界的迭代器。移除的所有元素仍然可以通过返回的迭代器访问到。
+      为了实际移除元素, 你必须对容器自行调用erase()以擦除需要移除的元素。
+      这也是erase - remove idiom名称的由来。https ://blog.csdn.net/u010913001/article/details/53348580 
+    */
     iiivec.erase(remove_if(iiivec.begin(), iiivec.end(), Compare(2, 5)), iiivec.end());
     for (auto i : iiivec) { cout << i << ' '; }
     cout << endl;
@@ -242,6 +250,8 @@ namespace STL_LAMBDA
     {
       cout << s;
     }
+
+    // third way: lambda表达式作为顺序容易比较准则
   }
 }
 
