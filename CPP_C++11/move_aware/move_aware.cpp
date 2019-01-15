@@ -25,7 +25,7 @@ public:
 
   // 拷贝构造函数 
   MyString(const MyString& str) :_len(str._len) {
-    ++CCtor;
+    ++CCtor; 
     init_data(str._data);
   }
 
