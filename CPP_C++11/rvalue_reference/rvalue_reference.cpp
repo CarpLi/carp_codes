@@ -102,15 +102,15 @@ namespace PERFECT_FORWARDING {
 }
 namespace FUNCTION_WRAPPER
 {
-
-  template <class Function, class... Args>
+  // 函数包装器 函数名称+不定个数参数
+  template<typename Function, class... Args>
   inline auto FunctionWrapper(Function&& f, Args&&... args)->decltype(f(forward<Args>(args)...)) {
-    return f((forward<Args>(args))...);
+    return f(forward<Args>(args)...);
   }
 
   void test0() {
     cout << "test0(): void" << endl;
-  }
+  }  
 
   int test1() {
     return 1;
@@ -126,7 +126,9 @@ namespace FUNCTION_WRAPPER
 
   void TEST() {
     FunctionWrapper(test0);
-
+    std::cout << FunctionWrapper(test1) << std::endl;
+    std::cout << FunctionWrapper(test2, 1) << std::endl;
+    std::cout << FunctionWrapper(test3, "aa", "bb") << std::endl;
   }
 }
 
