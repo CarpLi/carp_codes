@@ -1,3 +1,4 @@
+//#include "pch.h"
 #include <string>
 #include <iostream>
 #include <vector>
@@ -35,7 +36,7 @@ using namespace std;
 namespace SIMPLE_LAMBDA
 {
   auto I = [] {
-      cout << "hello world!" << endl;
+      cout << "SIMPLE_LAMBDA -----------------" << endl;
   };
 
   int id = 0;
