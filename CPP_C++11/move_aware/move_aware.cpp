@@ -12,24 +12,24 @@ public:
 
 public:
 
-  // Ä¬ÈÏ¹¹Ôìº¯Êı
+  // é»˜è®¤æ„é€ å‡½æ•°
   MyString() :_data(nullptr), _len(0) {
     ++DCtor;
   }
 
-  // ¹¹Ôìº¯Êı
+  // æ„é€ å‡½æ•°
   MyString(char* p):_len(strlen(p)){
     ++Ctor;
     init_data(p);
   }
 
-  // ¿½±´¹¹Ôìº¯Êı 
+  // æ‹·è´æ„é€ å‡½æ•° 
   MyString(const MyString& str) :_len(str._len) {
     ++CCtor;
     init_data(str._data);
   }
 
-  // ÒÆ¶¯¹¹Ôìº¯Êı
+  // ç§»åŠ¨æ„é€ å‡½æ•°
   MyString(MyString&& str) : _data(str._data), _len(str._len){
     //_data = str._data;
     //_len = str._len;
@@ -37,7 +37,7 @@ public:
     str._len = 0;
   }
 
-  // ¸³Öµ²Ù×÷·û
+  // èµ‹å€¼æ“ä½œç¬¦
   MyString& operator=(const MyString& str) {
     ++CAsign;
     if (this != &str) {
@@ -51,8 +51,39 @@ public:
     return *this;
   }
 
-  // ÒÆ¶¯¸³Öµ²Ù×÷·û
+  // ç§»åŠ¨èµ‹å€¼æ“ä½œç¬¦
   MyString& operator=(MyString&& str) {
+    ++MAsign;
+    if (this != &str) {
+      if (_data != nullptr) {
+        delete _data;
+      }
+      _len = str._len;
+      _data = str._data;
+
+      str._len = 0;
+      str._data = nullptr;
+    }
+    else {
+    }
+    return *this;
+  }
+
+  // ææ„å‡½æ•°
+  virtual ~MyString() {
+    delete _data;
+    _data = nullptr;
+    _len = 0;
+  }
+
+  // å°äºæ¯”è¾ƒç¬¦
+  bool operator<(const MyString& rhs) const{
+    return std::string(_data) < std::string(rhs._data);
+  }
+
+  // ç­‰äºæ¯”è¾ƒç¬¦
+  bool operator==(const MyString& rhs) const {
+    return std::string(_data) == std::string(rhs._data);
   }
 
 private:
