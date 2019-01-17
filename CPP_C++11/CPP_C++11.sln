@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.168
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28407.52
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "initializer_list", "initializer_list\initializer_list.vcxproj", "{7B78EA5D-F9F6-476A-BE31-97B9AF356954}"
 EndProject
@@ -17,7 +17,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rvalue_reference", "rvalue_
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "alias_template", "alias_template\alias_template.vcxproj", "{4CF1918E-6A2E-491B-A59D-2FEBF8B933F1}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "move_aware", "move_aware\move_aware.vcxproj", "{28E7284D-621B-40DD-9C10-ED72B19E4644}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "new_features", "new_features\new_features.vcxproj", "{28E7284D-621B-40DD-9C10-ED72B19E4644}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

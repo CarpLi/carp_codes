@@ -1,7 +1,7 @@
 // author : Hou Jie (侯捷)
 // date : 2015/10/28 
 // compiler : DevC++ 5.11 (MinGW with GNU 4.9.9.2)
-//
+// 
 // 說明：這是侯捷 E-learning video "C++標準庫" 的實例程式.
 // 該課程的所有測試都出現在此.
 // 每一個小測試單元都被放進一個 namespace 中, 
@@ -9,7 +9,7 @@
 // 每個 namespace 上方皆有該單元相應的 #include <...> 
 // 因此有可能整個程式重複含入 (included) 某些 headers. 
 // 這無所謂，因為每個 standard headers 都有自我防衛機制，不讓自己被 included 二次.
-//
+// 
 // 本文件用到若干 C++ 2.0 New Features，所以你必須在你的集成環境 (IDE) 上設定 "C++11 on". 
 // 如果你的編譯器報錯，應是因為我用到 (測試) GNU 標準庫的獨特 (非標準) 組件 (特別是 allocators)，
 // 將報錯語句改為註解 (comments) 即可通過編譯. 
@@ -17,26 +17,26 @@
 using namespace std;
 const long ASIZE = 500000L;
 
-//----------------------------------------------------
+// ----------------------------------------------------
 #include <iostream>
-#include <cstdio>  //snprintf()
-#include <cstdlib> //RAND_MAX
-#include <cstring> //strlen(), memcpy()
+#include <cstdio>  // snprintf()
+#include <cstdlib> // RAND_MAX
+#include <cstring> // strlen(), memcpy()
 #include <string> 
 using std::cin;
 using std::cout;
 using std::string;
 
-//以下 MyString 是為了測試 containers with moveable elements 效果.  
+// 以下 MyString 是為了測試 containers with moveable elements 效果.  
 class MyString {
 public:
-  static size_t DCtor;  	//累計 default-ctor 的呼叫次數 
-  static size_t Ctor;  	//累計 ctor      的呼叫次數 
-  static size_t CCtor;  	//累計 copy-ctor 的呼叫次數 
-  static size_t CAsgn;  	//累計 copy-asgn 的呼叫次數 
-  static size_t MCtor;  	//累計 move-ctor 的呼叫次數 
-  static size_t MAsgn;  	//累計 move-asgn 的呼叫次數 		    
-  static size_t Dtor;	//累計 dtor 的呼叫次數 
+  static size_t DCtor;  	// 累計 default-ctor 的呼叫次數 
+  static size_t Ctor;  	  // 累計 ctor      的呼叫次數 
+  static size_t CCtor;  	// 累計 copy-ctor 的呼叫次數 
+  static size_t CAsgn;  	// 累計 copy-asgn 的呼叫次數 
+  static size_t MCtor;  	// 累計 move-ctor 的呼叫次數 
+  static size_t MAsgn;  	// 累計 move-asgn 的呼叫次數 		    
+  static size_t Dtor;	    // 累計 dtor 的呼叫次數 
 private:
   char* _data;
   size_t _len;
@@ -46,10 +46,10 @@ private:
     _data[_len] = '\0';
   }
 public:
-  //default ctor
+  // default ctor
   MyString() : _data(NULL), _len(0) { ++DCtor; }
 
-  //ctor
+  // ctor
   MyString(const char* p) : _len(strlen(p)) {
     ++Ctor;
     _init_data(p);
@@ -58,23 +58,23 @@ public:
   // copy ctor
   MyString(const MyString& str) : _len(str._len) {
     ++CCtor;
-    _init_data(str._data); 	//COPY
+    _init_data(str._data); 	// COPY
   }
 
-  //move ctor, with "noexcept"
+  // move ctor, with "noexcept"
   MyString(MyString&& str) noexcept : _data(str._data), _len(str._len) {
     ++MCtor;
     str._len = 0;
-    str._data = NULL;  	//避免 delete (in dtor) 
+    str._data = NULL;  	// 避免 delete (in dtor) 
   }
 
-  //copy assignment
+  // copy assignment
   MyString& operator=(const MyString& str) {
     ++CAsgn;
     if (this != &str) {
       if (_data) delete _data;
       _len = str._len;
-      _init_data(str._data); 	//COPY! 
+      _init_data(str._data); 	// COPY! 
     }
     else {
       // Self Assignment, Nothing to do.   
@@ -82,20 +82,20 @@ public:
     return *this;
   }
 
-  //move assignment
+  // move assignment
   MyString& operator=(MyString&& str) noexcept {
     ++MAsgn;
     if (this != &str) {
       if (_data) delete _data;
       _len = str._len;
-      _data = str._data;	//MOVE!
+      _data = str._data;	// MOVE!
       str._len = 0;
-      str._data = NULL; 	//避免 deleted in dtor 
+      str._data = NULL; 	// 避免 deleted in dtor 
     }
     return *this;
   }
 
-  //dtor
+  // dtor
   virtual ~MyString() {
     ++Dtor;
     if (_data) {
@@ -103,15 +103,13 @@ public:
     }
   }
 
-  bool
-    operator<(const MyString& rhs) const	//為了讓 set 比較大小  
+  bool operator<(const MyString& rhs) const	// 為了讓 set 比較大小  
   {
-    return std::string(this->_data) < std::string(rhs._data); 	//借用事實：string 已能比較大小. 
+    return std::string(this->_data) < std::string(rhs._data); 	// 借用事實：string 已能比較大小. 
   }
-  bool
-    operator==(const MyString& rhs) const	//為了讓 set 判斷相等. 
+  bool operator==(const MyString& rhs) const	// 為了讓 set 判斷相等. 
   {
-    return std::string(this->_data) == std::string(rhs._data); 	//借用事實：string 已能判斷相等. 
+    return std::string(this->_data) == std::string(rhs._data); 	// 借用事實：string 已能判斷相等. 
   }
 
   char* get() const { return _data; }
@@ -124,30 +122,31 @@ size_t MyString::MCtor = 0;
 size_t MyString::MAsgn = 0;
 size_t MyString::Dtor = 0;
 
-namespace std 	//必須放在 std 內 
+namespace std 	// 必須放在 std 內 
 {
   template<>
-  struct hash<MyString> 	//這是為了 unordered containers 
+  struct hash<MyString> 	// 這是為了 unordered containers 
   {
     size_t
       operator()(const MyString& s) const noexcept
     {
       return hash<string>()(string(s.get()));
     }
-    //借用現有的 hash<string> (in ...\include\c++\bits\basic_string.h)
+    // 借用現有的 hash<string> (in ...\include\c++\bits\basic_string.h)
   };
 }
-//-----------------
-//以下 MyStrNoMove 是為了測試 containers with no-moveable elements 效果.  
+
+// -----------------
+// 以下 MyStrNoMove 是為了測試 containers with no-moveable elements 效果.  
 class MyStrNoMove {
 public:
-  static size_t DCtor;  	//累計 default-ctor 的呼叫次數 
-  static size_t Ctor;  	//累計 ctor      的呼叫次數 
-  static size_t CCtor;  	//累計 copy-ctor 的呼叫次數 
-  static size_t CAsgn;  	//累計 copy-asgn 的呼叫次數 
-  static size_t MCtor;  	//累計 move-ctor 的呼叫次數 
-  static size_t MAsgn;  	//累計 move-asgn 的呼叫次數 		    
-  static size_t Dtor;	    //累計 dtor 的呼叫次數 
+  static size_t DCtor;  	// 累計 default-ctor 的呼叫次數 
+  static size_t Ctor;  	  // 累計 ctor      的呼叫次數 
+  static size_t CCtor;  	// 累計 copy-ctor 的呼叫次數 
+  static size_t CAsgn;  	// 累計 copy-asgn 的呼叫次數 
+  static size_t MCtor;  	// 累計 move-ctor 的呼叫次數 
+  static size_t MAsgn;  	// 累計 move-asgn 的呼叫次數 		    
+  static size_t Dtor;	    // 累計 dtor 的呼叫次數 
 private:
   char* _data;
   size_t _len;
@@ -157,28 +156,29 @@ private:
     _data[_len] = '\0';
   }
 public:
-  //default ctor
+  // default ctor
   MyStrNoMove() : _data(NULL), _len(0) { ++DCtor; _init_data("jjhou"); }
 
-  //ctor
+  // ctor
   MyStrNoMove(const char* p) : _len(strlen(p)) {
-    ++Ctor;  _init_data(p);
+    ++Ctor;  
+    _init_data(p);
   }
 
   // copy ctor
   MyStrNoMove(const MyStrNoMove& str) : _len(str._len) {
     ++CCtor;
-    _init_data(str._data); 	//COPY
+    _init_data(str._data); 	// COPY
   }
 
-  //copy assignment
+  // copy assignment
   MyStrNoMove& operator=(const MyStrNoMove& str) {
     ++CAsgn;
 
     if (this != &str) {
       if (_data) delete _data;
       _len = str._len;
-      _init_data(str._data); 	//COPY! 
+      _init_data(str._data); 	// COPY! 
     }
     else {
       // Self Assignment, Nothing to do.   
@@ -186,7 +186,7 @@ public:
     return *this;
   }
 
-  //dtor
+  // dtor
   virtual ~MyStrNoMove() {
     ++Dtor;
     if (_data) {
@@ -194,20 +194,19 @@ public:
     }
   }
 
-  bool
-    operator<(const MyStrNoMove& rhs) const		//為了讓 set 比較大小 
+  bool operator<(const MyStrNoMove& rhs) const		// 為了讓 set 比較大小 
   {
-    return string(this->_data) < string(rhs._data);  //借用事實：string 已能比較大小. 
+    return string(this->_data) < string(rhs._data);  // 借用事實：string 已能比較大小. 
   }
 
-  bool
-    operator==(const MyStrNoMove& rhs) const	//為了讓 set 判斷相等. 
+  bool operator==(const MyStrNoMove& rhs) const	// 為了讓 set 判斷相等. 
   {
-    return string(this->_data) == string(rhs._data);  //借用事實：string 已能判斷相等. 
+    return string(this->_data) == string(rhs._data);  // 借用事實：string 已能判斷相等. 
   }
 
   char* get() const { return _data; }
 };
+
 size_t MyStrNoMove::DCtor = 0;
 size_t MyStrNoMove::Ctor = 0;
 size_t MyStrNoMove::CCtor = 0;
@@ -216,24 +215,23 @@ size_t MyStrNoMove::MCtor = 0;
 size_t MyStrNoMove::MAsgn = 0;
 size_t MyStrNoMove::Dtor = 0;
 
-namespace std 	//必須放在 std 內 
+namespace std 	// 必須放在 std 內 
 {
   template<>
-  struct hash<MyStrNoMove> 	//這是為了 unordered containers 
+  struct hash<MyStrNoMove> 	// 這是為了 unordered containers 
   {
-    size_t
-      operator()(const MyStrNoMove& s) const noexcept
+    size_t operator()(const MyStrNoMove& s) const noexcept
     {
       return hash<string>()(string(s.get()));
     }
-    //借用現有的 hash<string> (in ...\4.9.2\include\c++\bits\basic_string.h)
+    // 借用現有的 hash<string> (in ...\4.9.2\include\c++\bits\basic_string.h)
   };
 }
 
-//----------------------------------------------------
+// ----------------------------------------------------
 #include <iostream>
-#include <cstdio>  //snprintf()
-#include <cstdlib> //RAND_MAX
+#include <cstdio>  // snprintf()
+#include <cstdlib> // RAND_MAX
 #include <string> 
 #include <algorithm> 
 #include <list> 
@@ -248,7 +246,6 @@ using std::list;
 
 namespace jj00
 {
-
   bool strLonger(const string& s1, const string& s2) {
     return s1.size() < s2.size();
   }
@@ -257,34 +254,32 @@ namespace jj00
   {
     cout << "\ntest_misc().......... \n";
 
-    //以下這些是標準庫的眾多容器的 max_size() 計算方式.  
-    cout << size_t(-1) << endl;					         	//4294967295
-    cout << size_t(-1) / sizeof(long) << endl;		     	//1073741823
-    cout << size_t(-1) / sizeof(string) << endl;	         	//1073741823
-    cout << size_t(-1) / sizeof(_List_node<string, void *>) << endl; 	//357913941
-    //cout << size_t(-1) / sizeof(_Fwd_list_node<string>) << endl; //536870911
-    cout << "RAND_MAX= " << RAND_MAX << endl;	//32767
+    // 以下這些是標準庫的眾多容器的 max_size() 計算方式.  
+    cout << size_t(-1) << endl;					         	// 4294967295
+    cout << size_t(-1) / sizeof(long) << endl;		     	// 1073741823
+    cout << size_t(-1) / sizeof(string) << endl;	         	// 1073741823
+    cout << size_t(-1) / sizeof(_List_node<string, void *>) << endl; 	// 357913941
+    // cout << size_t(-1) / sizeof(_Fwd_list_node<string>) << endl; // 536870911
+    cout << "RAND_MAX= " << RAND_MAX << endl;	// 32767
 
-    cout << min({ 2,5,8,9,45,0,81 }) << endl;  //0
-    cout << max({ 2,5,8,9,45,0,81 }) << endl;  //81
+    cout << min({ 2,5,8,9,45,0,81 }) << endl;  // 0
+    cout << max({ 2,5,8,9,45,0,81 }) << endl;  // 81
     vector<int> v{ 2,5,8,9,45,0,81 };
 
-    cout << "max of     zoo and hello : "
-      << max(string("zoo"), string("hello")) << endl;              //zoo
-    cout << "longest of zoo and hello : "
-      << max(string("zoo"), string("hello"), strLonger) << endl;   //hello    
-
-    cout << hash<MyString>()(MyString("Ace")) << endl;		//1765813650
-    cout << hash<MyString>()(MyString("Stacy")) << endl;	//2790324277
-    cout << "MyString(zoo) < MyString(hello) ==> " << (MyString("zoo") < MyString("hello")) << endl;	//0
-    cout << "MyString(zoo) == MyString(hello) ==> " << (MyString("zoo") == MyString("hello")) << endl;	//0	  
-    cout << "MyStrNoMove(zoo) < MyStrNoMove(hello) ==> " << (MyStrNoMove("zoo") < MyStrNoMove("hello")) << endl;	 //0
-    cout << "MyStrNoMove(zoo) == MyStrNoMove(hello) ==> " << (MyStrNoMove("zoo") == MyStrNoMove("hello")) << endl;	 //0
-    //以上建構了 6 個 MyString objects 和 4 個 MyStrNoMove objects，都是暫時生命.    
+    cout << "max of     zoo and hello : " << max(string("zoo"), string("hello")) << endl;              // zoo
+    cout << "longest of zoo and hello : " << max(string("zoo"), string("hello"), strLonger) << endl;   // hello    
+    cout << hash<MyString>()(MyString("Ace")) << endl;		// 1765813650
+    cout << hash<MyString>()(MyString("Stacy")) << endl;	// 2790324277
+    cout << "MyString(zoo) < MyString(hello) ==> " << (MyString("zoo") < MyString("hello")) << endl;	// 0
+    cout << "MyString(zoo) == MyString(hello) ==> " << (MyString("zoo") == MyString("hello")) << endl;	// 0	  
+    cout << "MyStrNoMove(zoo) < MyStrNoMove(hello) ==> " << (MyStrNoMove("zoo") < MyStrNoMove("hello")) << endl;	 // 0
+    cout << "MyStrNoMove(zoo) == MyStrNoMove(hello) ==> " << (MyStrNoMove("zoo") == MyStrNoMove("hello")) << endl;	 // 0
+    // 以上建構了 6 個 MyString objects 和 4 個 MyStrNoMove objects，都是暫時生命.    
   }
 }
-//--------------------------------------------------
-#include <typeinfo>  //typeid()
+
+// --------------------------------------------------
+#include <typeinfo>  // typeid()
 template<typename T>
 void output_static_data(const T& myStr)
 {
@@ -299,15 +294,15 @@ void output_static_data(const T& myStr)
     << endl;
 }
 
-#include <ctime>  //clock_t, clock()
+#include <ctime>  // clock_t, clock()
 template<typename M, typename NM>
 void test_moveable(M c1, NM c2, long& value)
 {
   char buf[10];
 
-  //測試 move 
+  // 測試 move 
   cout << "\n\ntest, with moveable elements" << endl;
-   typedef typename iterator_traits<typename M::iterator>::value_type V1type;
+  typedef typename iterator_traits<typename M::iterator>::value_type V1type;
   clock_t timeStart = clock();
   for (long i = 0; i < value; ++i)
   {
@@ -331,7 +326,7 @@ void test_moveable(M c1, NM c2, long& value)
   c11.swap(c12);
   cout << "swap, milli-seconds : " << (clock() - timeStart) << endl;
 
-  //測試 non-moveable 	
+  // 測試 non-moveable 	
   cout << "\n\ntest, with non-moveable elements" << endl;
   typedef typename iterator_traits<typename NM::iterator>::value_type  V2type;
   timeStart = clock();
@@ -358,11 +353,10 @@ void test_moveable(M c1, NM c2, long& value)
   c21.swap(c22);
   cout << "swap, milli-seconds : " << (clock() - timeStart) << endl;
 }
-//-----------------
-long get_a_target_long()
-{
-  long target = 0;
 
+// -----------------
+long get_a_target_long(){
+  long target = 0;
   cout << "target (0~" << RAND_MAX << "): ";
   cin >> target;
   return target;
@@ -393,11 +387,12 @@ int compareStrings(const void* a, const void* b)
   else
     return 0;
 }
-//---------------------------------------------------
+
+// ---------------------------------------------------
 #include <array>
 #include <iostream>
 #include <ctime> 
-#include <cstdlib> //qsort, bsearch, NULL
+#include <cstdlib> // qsort, bsearch, NULL
 
 namespace jj01
 {
@@ -411,7 +406,7 @@ namespace jj01
     for (long i = 0; i < ASIZE; ++i) {
       c[i] = rand();
     }
-    cout << "milli-seconds : " << (clock() - timeStart) << endl;	//
+    cout << "milli-seconds : " << (clock() - timeStart) << endl;	// 
     cout << "array.size()= " << c.size() << endl;
     cout << "array.front()= " << c.front() << endl;
     cout << "array.back()= " << c.back() << endl;
@@ -422,22 +417,23 @@ namespace jj01
     timeStart = clock();
     ::qsort(c.data(), ASIZE, sizeof(long), compareLongs);
     long* pItem = (long*)::bsearch(&target, (c.data()), ASIZE, sizeof(long), compareLongs);
-    cout << "qsort()+bsearch(), milli-seconds : " << (clock() - timeStart) << endl;	//    
+    cout << "qsort()+bsearch(), milli-seconds : " << (clock() - timeStart) << endl;	//   
     if (pItem != NULL)
       cout << "found, " << *pItem << endl;
     else
       cout << "not found! " << endl;
   }
 }
-//---------------------------------------------------
+
+// ---------------------------------------------------
 #include <vector>
 #include <stdexcept>
 #include <string>
-#include <cstdlib> //abort()
-#include <cstdio>  //snprintf()
+#include <cstdlib> // abort()
+#include <cstdio>  // snprintf()
 #include <iostream>
 #include <ctime> 
-#include <algorithm> 	//sort()
+#include <algorithm> 	// sort()
 namespace jj02
 {
   void test_vector(long& value)
@@ -456,12 +452,12 @@ namespace jj02
       }
       catch (exception& p) {
         cout << "i=" << i << " " << p.what() << endl;
-        //曾經最高 i=58389486 then std::bad_alloc
+        // 曾經最高 i=58389486 then std::bad_alloc
         abort();
       }
     }
     cout << "milli-seconds : " << (clock() - timeStart) << endl;
-    cout << "vector.max_size()= " << c.max_size() << endl;	//1073747823
+    cout << "vector.max_size()= " << c.max_size() << endl;	// 1073747823
     cout << "vector.size()= " << c.size() << endl;
     cout << "vector.front()= " << c.front() << endl;
     cout << "vector.back()= " << c.back() << endl;
@@ -501,13 +497,14 @@ namespace jj02
     test_moveable(vector<MyString>(), vector<MyStrNoMove>(), value);
   }
 }
-//---------------------------------------------------
+
+// ---------------------------------------------------
 #include <list>
 #include <stdexcept>
 #include <string>
-#include <cstdlib> //abort()
-#include <cstdio>  //snprintf()
-#include <algorithm> //find()
+#include <cstdlib> // abort()
+#include <cstdio>  // snprintf()
+#include <algorithm> // find()
 #include <iostream>
 #include <ctime> 
 namespace jj03
@@ -533,7 +530,7 @@ namespace jj03
     }
     cout << "milli-seconds : " << (clock() - timeStart) << endl;
     cout << "list.size()= " << c.size() << endl;
-    cout << "list.max_size()= " << c.max_size() << endl;    //357913941
+    cout << "list.max_size()= " << c.max_size() << endl;    // 357913941
     cout << "list.front()= " << c.front() << endl;
     cout << "list.back()= " << c.back() << endl;
 
@@ -555,12 +552,13 @@ namespace jj03
     test_moveable(list<MyString>(), list<MyStrNoMove>(), value);
   }
 }
-//---------------------------------------------------
+
+// ---------------------------------------------------
 #include <forward_list>
 #include <stdexcept>
 #include <string>
-#include <cstdlib> //abort()
-#include <cstdio>  //snprintf()
+#include <cstdlib> // abort()
+#include <cstdio>  // snprintf()
 #include <iostream>
 #include <ctime> 
 namespace jj04
@@ -585,7 +583,7 @@ namespace jj04
       }
     }
     cout << "milli-seconds : " << (clock() - timeStart) << endl;
-    cout << "forward_list.max_size()= " << c.max_size() << endl;  //536870911
+    cout << "forward_list.max_size()= " << c.max_size() << endl;  // 536870911
     cout << "forward_list.front()= " << c.front() << endl;
 
 
@@ -606,12 +604,13 @@ namespace jj04
     c.clear();
   }
 }
-//---------------------------------------------------
+
+// ---------------------------------------------------
 #include <deque>
 #include <stdexcept>
 #include <string>
-#include <cstdlib> //abort()
-#include <cstdio>  //snprintf()
+#include <cstdlib> // abort()
+#include <cstdio>  // snprintf()
 #include <iostream>
 #include <ctime> 
 namespace jj05
@@ -639,7 +638,7 @@ namespace jj05
     cout << "deque.size()= " << c.size() << endl;
     cout << "deque.front()= " << c.front() << endl;
     cout << "deque.back()= " << c.back() << endl;
-    cout << "deque.max_size()= " << c.max_size() << endl;	//1073741821	
+    cout << "deque.max_size()= " << c.max_size() << endl;	// 1073741821	
 
     string target = get_a_target_string();
     timeStart = clock();
@@ -659,12 +658,13 @@ namespace jj05
     test_moveable(deque<MyString>(), deque<MyStrNoMove>(), value);
   }
 }
-//---------------------------------------------------
+
+// ---------------------------------------------------
 #include <set>
 #include <stdexcept>
 #include <string>
-#include <cstdlib> //abort()
-#include <cstdio>  //snprintf()
+#include <cstdlib> // abort()
+#include <cstdio>  // snprintf()
 #include <iostream>
 #include <ctime> 
 namespace jj06
@@ -689,12 +689,12 @@ namespace jj06
     }
     cout << "milli-seconds : " << (clock() - timeStart) << endl;
     cout << "multiset.size()= " << c.size() << endl;
-    cout << "multiset.max_size()= " << c.max_size() << endl;	//214748364
+    cout << "multiset.max_size()= " << c.max_size() << endl;	// 214748364
 
     string target = get_a_target_string();
     {
       timeStart = clock();
-      auto pItem = find(c.begin(), c.end(), target);	//比 c.find(...) 慢很多	
+      auto pItem = find(c.begin(), c.end(), target);	// 比 c.find(...) 慢很多	
       cout << "std::find(), milli-seconds : " << (clock() - timeStart) << endl;
       if (pItem != c.end())
         cout << "found, " << *pItem << endl;
@@ -704,7 +704,7 @@ namespace jj06
 
     {
       timeStart = clock();
-      auto pItem = c.find(target);		//比 std::find(...) 快很多							
+      auto pItem = c.find(target);		// 比 std::find(...) 快很多							
       cout << "c.find(), milli-seconds : " << (clock() - timeStart) << endl;
       if (pItem != c.end())
         cout << "found, " << *pItem << endl;
@@ -716,12 +716,13 @@ namespace jj06
     test_moveable(multiset<MyString>(), multiset<MyStrNoMove>(), value);
   }
 }
-//---------------------------------------------------
+
+// ---------------------------------------------------
 #include <map>
 #include <stdexcept>
 #include <string>
-#include <cstdlib> //abort()
-#include <cstdio>  //snprintf()
+#include <cstdlib> // abort()
+#include <cstdio>  // snprintf()
 #include <iostream>
 #include <ctime> 
 namespace jj07
@@ -738,7 +739,7 @@ namespace jj07
     {
       try {
         snprintf(buf, 10, "%d", rand());
-        //multimap 不可使用 [] 做 insertion 
+        // multimap 不可使用 [] 做 insertion 
         c.insert(pair<long, string>(i, buf));
       }
       catch (exception& p) {
@@ -748,7 +749,7 @@ namespace jj07
     }
     cout << "milli-seconds : " << (clock() - timeStart) << endl;
     cout << "multimap.size()= " << c.size() << endl;
-    cout << "multimap.max_size()= " << c.max_size() << endl;	//178956970	
+    cout << "multimap.max_size()= " << c.max_size() << endl;	// 178956970	
 
     long target = get_a_target_long();
     timeStart = clock();
@@ -762,12 +763,13 @@ namespace jj07
     c.clear();
   }
 }
-//---------------------------------------------------
+
+// ---------------------------------------------------
 #include <unordered_set>
 #include <stdexcept>
 #include <string>
-#include <cstdlib> //abort()
-#include <cstdio>  //snprintf()
+#include <cstdlib> // abort()
+#include <cstdio>  // snprintf()
 #include <iostream>
 #include <ctime> 
 namespace jj08
@@ -793,7 +795,7 @@ namespace jj08
     }
     cout << "milli-seconds : " << (clock() - timeStart) << endl;
     cout << "unordered_multiset.size()= " << c.size() << endl;
-    cout << "unordered_multiset.max_size()= " << c.max_size() << endl;	//357913941
+    cout << "unordered_multiset.max_size()= " << c.max_size() << endl;	// 357913941
     cout << "unordered_multiset.bucket_count()= " << c.bucket_count() << endl;
     cout << "unordered_multiset.load_factor()= " << c.load_factor() << endl;
     cout << "unordered_multiset.max_load_factor()= " << c.max_load_factor() << endl;
@@ -805,7 +807,7 @@ namespace jj08
     string target = get_a_target_string();
     {
       timeStart = clock();
-      auto pItem = find(c.begin(), c.end(), target);	//比 c.find(...) 慢很多	
+      auto pItem = find(c.begin(), c.end(), target);	// 比 c.find(...) 慢很多	
       cout << "std::find(), milli-seconds : " << (clock() - timeStart) << endl;
       if (pItem != c.end())
         cout << "found, " << *pItem << endl;
@@ -815,7 +817,7 @@ namespace jj08
 
     {
       timeStart = clock();
-      auto pItem = c.find(target);		//比 std::find(...) 快很多							
+      auto pItem = c.find(target);		// 比 std::find(...) 快很多							
       cout << "c.find(), milli-seconds : " << (clock() - timeStart) << endl;
       if (pItem != c.end())
         cout << "found, " << *pItem << endl;
@@ -827,12 +829,13 @@ namespace jj08
     test_moveable(unordered_multiset<MyString>(), unordered_multiset<MyStrNoMove>(), value);
   }
 }
-//---------------------------------------------------
+
+// ---------------------------------------------------
 #include <unordered_map>
 #include <stdexcept>
 #include <string>
-#include <cstdlib> //abort()
-#include <cstdio>  //snprintf()
+#include <cstdlib> // abort()
+#include <cstdio>  // snprintf()
 #include <iostream>
 #include <ctime> 
 namespace jj09
@@ -849,7 +852,7 @@ namespace jj09
     {
       try {
         snprintf(buf, 10, "%d", rand());
-        //multimap 不可使用 [] 進行 insertion 
+        // multimap 不可使用 [] 進行 insertion 
         c.insert(pair<long, string>(i, buf));
       }
       catch (exception& p) {
@@ -859,7 +862,7 @@ namespace jj09
     }
     cout << "milli-seconds : " << (clock() - timeStart) << endl;
     cout << "unordered_multimap.size()= " << c.size() << endl;
-    cout << "unordered_multimap.max_size()= " << c.max_size() << endl;	//357913941	
+    cout << "unordered_multimap.max_size()= " << c.max_size() << endl;	// 357913941	
 
     long target = get_a_target_long();
     timeStart = clock();
@@ -871,43 +874,44 @@ namespace jj09
       cout << "not found! " << endl;
   }
 }
-//---------------------------------------------------
-//#include <ext\slist>
-  //注意, 上一行並沒有引發警告訊息如 #include <ext\hash_set> 所引發者： 
-  //...\4.9.2\include\c++\backward\backward_warning.h	
-  //[Warning] ...
+
+// ---------------------------------------------------
+// #include <ext\slist>
+// 注意, 上一行並沒有引發警告訊息如 #include <ext\hash_set> 所引發者： 
+// ...\4.9.2\include\c++\backward\backward_warning.h	
+// [Warning] ...
 
 #include <stdexcept>
 #include <string>
-#include <cstdlib> //abort()
-#include <cstdio>  //snprintf()
+#include <cstdlib> // abort()
+#include <cstdio>  // snprintf()
 #include <iostream>
 #include <ctime> 
 namespace jj10
 {
   void test_slist(long& value)
   {
-    //cout << "\ntest_slist().......... \n";
+    // cout << "\ntest_slist().......... \n";
 
-    //__gnu_cxx::slist<string> c;
-    //char buf[10];
+    // __gnu_cxx::slist<string> c;
+    // char buf[10];
 
-    //clock_t timeStart = clock();
-    //for (long i = 0; i < value; ++i)
-    //{
-    //  try {
-    //    snprintf(buf, 10, "%d", rand());
-    //    c.push_front(string(buf));
-    //  }
-    //  catch (exception& p) {
-    //    cout << "i=" << i << " " << p.what() << endl;
-    //    abort();
-    //  }
-    //}
-    //cout << "milli-seconds : " << (clock() - timeStart) << endl;
+    // clock_t timeStart = clock();
+    // for (long i = 0; i < value; ++i)
+    // {
+    // try {
+    //   snprintf(buf, 10, "%d", rand());
+    //   c.push_front(string(buf));
+    // }
+    // catch (exception& p) {
+    //   cout << "i=" << i << " " << p.what() << endl;
+    //   abort();
+    // }
+    // }
+    // cout << "milli-seconds : " << (clock() - timeStart) << endl;
   }
 }
-//---------------------------------------------------
+// ---------------------------------------------------
 /*
 以下測試 hash_multiset, hash_multimap 過程中遇到阻礙：
 headers <hash_set> 和 <hash_map> 各有兩個，
@@ -920,18 +924,18 @@ headers <hash_set> 和 <hash_map> 各有兩個，
 so, 放棄測試 (no insertion or push_back or ...).
 */
 
-//#include <ext\hash_set>		
-//...\4.9.2\include\c++\backward\backward_warning.h	
-//[Warning] #warning This file includes at least one deprecated or antiquated header 
-//which may be removed without further notice at a future date. 
-//Please use a non-deprecated interface with equivalent functionality instead. 
-//For a listing of replacement headers and interfaces, consult the file backward_warning.h. 
-//To disable this warning use -Wno-deprecated. [-Wcpp]
+// #include <ext\hash_set>		
+// ...\4.9.2\include\c++\backward\backward_warning.h	
+// [Warning] #warning This file includes at least one deprecated or antiquated header 
+// which may be removed without further notice at a future date. 
+// Please use a non-deprecated interface with equivalent functionality instead. 
+// For a listing of replacement headers and interfaces, consult the file backward_warning.h. 
+// To disable this warning use -Wno-deprecated. [-Wcpp]
 
 #include <stdexcept>
 #include <string>
-#include <cstdlib> //abort()
-#include <cstdio>  //snprintf()
+#include <cstdlib> // abort()
+#include <cstdio>  // snprintf()
 #include <iostream>
 #include <ctime> 
 namespace jj11
@@ -940,32 +944,32 @@ namespace jj11
   {
     cout << "\ntest_hash_multiset().......... \n";
 
-    //__gnu_cxx::hash_multiset<string> c;
-    //char buf[10];
+    // __gnu_cxx::hash_multiset<string> c;
+    // char buf[10];
 
-    //clock_t timeStart = clock();
-    //for (long i = 0; i < value; ++i)
-    //{
-    //  try {
-    //    snprintf(buf, 10, "%d", rand());
-    //    //! c.insert(string(buf));     		
-    //  }
-    //  catch (exception& p) {
-    //    cout << "i=" << i << " " << p.what() << endl;
-    //    abort();
-    //  }
-    //}
-    //cout << "milli-seconds : " << (clock() - timeStart) << endl;
+    // clock_t timeStart = clock();
+    // for (long i = 0; i < value; ++i)
+    // {
+    // try {
+    //   snprintf(buf, 10, "%d", rand());
+    //   // ! c.insert(string(buf));     		
+    // }
+    // catch (exception& p) {
+    //   cout << "i=" << i << " " << p.what() << endl;
+    //   abort();
+    // }
+    // }
+    // cout << "milli-seconds : " << (clock() - timeStart) << endl;
   }
 }
-//---------------------------------------------------
-//#include <ext\hash_map>
-    //...\4.9.2\include\c++\backward\backward_warning.h	
-  //[Warning] #warning This file ... (如上個函數所言)
+// ---------------------------------------------------
+// #include <ext\hash_map>
+// ...\4.9.2\include\c++\backward\backward_warning.h	
+// [Warning] #warning This file ... (如上個函數所言)
 #include <stdexcept>
 #include <string>
-#include <cstdlib> //abort()
-#include <cstdio>  //snprintf()
+#include <cstdlib> // abort()
+#include <cstdio>  // snprintf()
 #include <iostream>
 #include <ctime> 
 namespace jj12
@@ -974,34 +978,35 @@ namespace jj12
   {
     cout << "\ntest_hash_multimap().......... \n";
 
-    //__gnu_cxx::hash_multimap<long, string> c;
-    //char buf[10];
+    // __gnu_cxx::hash_multimap<long, string> c;
+    // char buf[10];
 
-    //clock_t timeStart = clock();
-    //for (long i = 0; i < value; ++i)
-    //{
-    //  try {
-    //    snprintf(buf, 10, "%d", rand());
-    //    //c.insert(...   		
-    //  }
+    // clock_t timeStart = clock();
+    // for (long i = 0; i < value; ++i)
+    // {
+    // try {
+    //   snprintf(buf, 10, "%d", rand());
+    //   // c.insert(...   		
+    // }
     //  catch (exception& p) {
     //    cout << "i=" << i << " " << p.what() << endl;
     //    abort();
     //  }
-    //}
-    //cout << "milli-seconds : " << (clock() - timeStart) << endl;
+    // }
+    // cout << "milli-seconds : " << (clock() - timeStart) << endl;
 
-    //timeStart = clock();
-    ////! auto ite = c.find(...
-    //cout << "milli-seconds : " << (clock() - timeStart) << endl;
+    // timeStart = clock();
+    // // ! auto ite = c.find(...
+    // cout << "milli-seconds : " << (clock() - timeStart) << endl;
   }
 }
-//---------------------------------------------------
+
+// ---------------------------------------------------
 #include <set>
 #include <stdexcept>
 #include <string>
-#include <cstdlib> //abort()
-#include <cstdio>  //snprintf()
+#include <cstdlib> // abort()
+#include <cstdio>  // snprintf()
 #include <iostream>
 #include <ctime> 
 namespace jj13
@@ -1027,12 +1032,12 @@ namespace jj13
     }
     cout << "milli-seconds : " << (clock() - timeStart) << endl;
     cout << "set.size()= " << c.size() << endl;
-    cout << "set.max_size()= " << c.max_size() << endl;	   //214748364
+    cout << "set.max_size()= " << c.max_size() << endl;	   // 214748364
 
     string target = get_a_target_string();
     {
       timeStart = clock();
-      auto pItem = find(c.begin(), c.end(), target);	//比 c.find(...) 慢很多	
+      auto pItem = find(c.begin(), c.end(), target);	// 比 c.find(...) 慢很多	
       cout << "std::find(), milli-seconds : " << (clock() - timeStart) << endl;
       if (pItem != c.end())
         cout << "found, " << *pItem << endl;
@@ -1042,7 +1047,7 @@ namespace jj13
 
     {
       timeStart = clock();
-      auto pItem = c.find(target);		//比 std::find(...) 快很多							
+      auto pItem = c.find(target);		// 比 std::find(...) 快很多							
       cout << "c.find(), milli-seconds : " << (clock() - timeStart) << endl;
       if (pItem != c.end())
         cout << "found, " << *pItem << endl;
@@ -1051,12 +1056,13 @@ namespace jj13
     }
   }
 }
-//---------------------------------------------------
+
+// ---------------------------------------------------
 #include <map>
 #include <stdexcept>
 #include <string>
-#include <cstdlib> //abort()
-#include <cstdio>  //snprintf()
+#include <cstdlib> // abort()
+#include <cstdio>  // snprintf()
 #include <iostream>
 #include <ctime> 
 namespace jj14
@@ -1082,7 +1088,7 @@ namespace jj14
     }
     cout << "milli-seconds : " << (clock() - timeStart) << endl;
     cout << "map.size()= " << c.size() << endl;
-    cout << "map.max_size()= " << c.max_size() << endl;		//178956970
+    cout << "map.max_size()= " << c.max_size() << endl;		// 178956970
 
     long target = get_a_target_long();
     timeStart = clock();
@@ -1096,12 +1102,13 @@ namespace jj14
     c.clear();
   }
 }
-//---------------------------------------------------
+
+// ---------------------------------------------------
 #include <unordered_set>
 #include <stdexcept>
 #include <string>
-#include <cstdlib> //abort()
-#include <cstdio>  //snprintf()
+#include <cstdlib> // abort()
+#include <cstdio>  // snprintf()
 #include <iostream>
 #include <ctime> 
 namespace jj15
@@ -1127,7 +1134,7 @@ namespace jj15
     }
     cout << "milli-seconds : " << (clock() - timeStart) << endl;
     cout << "unordered_set.size()= " << c.size() << endl;
-    cout << "unordered_set.max_size()= " << c.max_size() << endl;  //357913941
+    cout << "unordered_set.max_size()= " << c.max_size() << endl;  // 357913941
     cout << "unordered_set.bucket_count()= " << c.bucket_count() << endl;
     cout << "unordered_set.load_factor()= " << c.load_factor() << endl;
     cout << "unordered_set.max_load_factor()= " << c.max_load_factor() << endl;
@@ -1139,7 +1146,7 @@ namespace jj15
     string target = get_a_target_string();
     {
       timeStart = clock();
-      auto pItem = find(c.begin(), c.end(), target);	//比 c.find(...) 慢很多	
+      auto pItem = find(c.begin(), c.end(), target);	// 比 c.find(...) 慢很多	
       cout << "std::find(), milli-seconds : " << (clock() - timeStart) << endl;
       if (pItem != c.end())
         cout << "found, " << *pItem << endl;
@@ -1149,7 +1156,7 @@ namespace jj15
 
     {
       timeStart = clock();
-      auto pItem = c.find(target);		//比 std::find(...) 快很多							
+      auto pItem = c.find(target);		// 比 std::find(...) 快很多							
       cout << "c.find(), milli-seconds : " << (clock() - timeStart) << endl;
       if (pItem != c.end())
         cout << "found, " << *pItem << endl;
@@ -1158,12 +1165,13 @@ namespace jj15
     }
   }
 }
-//---------------------------------------------------
+
+// ---------------------------------------------------
 #include <unordered_map>
 #include <stdexcept>
 #include <string>
-#include <cstdlib> //abort()
-#include <cstdio>  //snprintf()
+#include <cstdlib> // abort()
+#include <cstdio>  // snprintf()
 #include <iostream>
 #include <ctime> 
 namespace jj16
@@ -1188,12 +1196,12 @@ namespace jj16
       }
     }
     cout << "milli-seconds : " << (clock() - timeStart) << endl;
-    cout << "unordered_map.size()= " << c.size() << endl;	//357913941
+    cout << "unordered_map.size()= " << c.size() << endl;	// 357913941
     cout << "unordered_map.max_size()= " << c.max_size() << endl;
 
     long target = get_a_target_long();
     timeStart = clock();
-    //! auto pItem = find(c.begin(), c.end(), target);	//map 不適用 std::find() 			
+    // ! auto pItem = find(c.begin(), c.end(), target);	// map 不適用 std::find() 			
     auto pItem = c.find(target);
 
     cout << "c.find(), milli-seconds : " << (clock() - timeStart) << endl;
@@ -1203,12 +1211,13 @@ namespace jj16
       cout << "not found! " << endl;
   }
 }
-//---------------------------------------------------
+
+// ---------------------------------------------------
 #include <stack>
 #include <stdexcept>
 #include <string>
-#include <cstdlib> //abort()
-#include <cstdio>  //snprintf()
+#include <cstdlib> // abort()
+#include <cstdio>  // snprintf()
 #include <iostream>
 #include <ctime> 
 namespace jj17
@@ -1241,7 +1250,7 @@ namespace jj17
 
 
     {
-      stack<string, list<string>> c;		//以 list 為底層 
+      stack<string, list<string>> c;		// 以 list 為底層 
       for (long i = 0; i < 10; ++i) {
         snprintf(buf, 10, "%d", rand());
         c.push(string(buf));
@@ -1254,7 +1263,7 @@ namespace jj17
     }
 
     {
-      stack<string, vector<string>> c;	//以 vector 為底層 
+      stack<string, vector<string>> c;	// 以 vector 為底層 
       for (long i = 0; i < 10; ++i) {
         snprintf(buf, 10, "%d", rand());
         c.push(string(buf));
@@ -1267,7 +1276,7 @@ namespace jj17
     }
 
     {
-      stack<string, set<string>> c;	//以 set 為底層 
+      stack<string, set<string>> c;	// 以 set 為底層 
       /*!
           for(long i=0; i< 10; ++i) {
               snprintf(buf, 10, "%d", rand());
@@ -1279,23 +1288,24 @@ namespace jj17
         cout << "stack.size()= " << c.size() << endl;
         cout << "stack.top()= " << c.top() << endl;
 
-      //[Error] 'class std::set<std::basic_string<char> >' has no member named 'push_back'
-      //[Error] 'class std::set<std::basic_string<char> >' has no member named 'back'
-      //[Error] 'class std::set<std::basic_string<char> >' has no member named 'pop_back'
+      // [Error] 'class std::set<std::basic_string<char> >' has no member named 'push_back'
+      // [Error] 'class std::set<std::basic_string<char> >' has no member named 'back'
+      // [Error] 'class std::set<std::basic_string<char> >' has no member named 'pop_back'
       */
     }
 
-    //!stack<string, map(string>> c5;	////以 map 為底層, [Error] template argument 2 is invalid
-    //!stack<string>::iterator ite1;  	//[Error] 'iterator' is not a member of 'std::stack<std::basic_string<char> >'
+    // !stack<string, map(string>> c5;	// // 以 map 為底層, [Error] template argument 2 is invalid
+    // !stack<string>::iterator ite1;  	// [Error] 'iterator' is not a member of 'std::stack<std::basic_string<char> >'
 
   }
 }
-//---------------------------------------------------
+
+// ---------------------------------------------------
 #include <queue>
 #include <stdexcept>
 #include <string>
-#include <cstdlib> //abort()
-#include <cstdio>  //snprintf()
+#include <cstdlib> // abort()
+#include <cstdio>  // snprintf()
 #include <iostream>
 #include <ctime> 
 namespace jj18
@@ -1330,7 +1340,7 @@ namespace jj18
 
 
     {
-      queue<string, list<string>> c;		//以 list 為底層 
+      queue<string, list<string>> c;		// 以 list 為底層 
       for (long i = 0; i < 10; ++i) {
         snprintf(buf, 10, "%d", rand());
         c.push(string(buf));
@@ -1345,7 +1355,7 @@ namespace jj18
     }
 
     {
-      queue<string, vector<string>> c;	//以 vector 為底層 
+      queue<string, vector<string>> c;	// 以 vector 為底層 
       for (long i = 0; i < 10; ++i) {
         snprintf(buf, 10, "%d", rand());
         c.push(string(buf));
@@ -1353,14 +1363,14 @@ namespace jj18
       cout << "queue.size()= " << c.size() << endl;
       cout << "queue.front()= " << c.front() << endl;
       cout << "queue.back()= " << c.back() << endl;
-      //!c.pop();  //[Error] 'class std::vector<std::basic_string<char> >' has no member named 'pop_front'
+      // !c.pop();  // [Error] 'class std::vector<std::basic_string<char> >' has no member named 'pop_front'
       cout << "queue.size()= " << c.size() << endl;
       cout << "queue.front()= " << c.front() << endl;
       cout << "queue.back()= " << c.back() << endl;
     }
 
     {
-      queue<string, set<string>> c;		//以 set 為底層 
+      queue<string, set<string>> c;		// 以 set 為底層 
       /*!
           for(long i=0; i< 10; ++i) {
               snprintf(buf, 10, "%d", rand());
@@ -1373,29 +1383,30 @@ namespace jj18
         cout << "queue.size()= " << c.size() << endl;
         cout << "queue.front()= " << c.front() << endl;
         cout << "queue.back()= " << c.back() << endl;
-      //[Error] 'class std::set<std::basic_string<char> >' has no member named 'push_back'
-      //[Error] 'class std::set<std::basic_string<char> >' has no member named 'front'
-      //[Error] 'class std::set<std::basic_string<char> >' has no member named 'pop_front'
+      // [Error] 'class std::set<std::basic_string<char> >' has no member named 'push_back'
+      // [Error] 'class std::set<std::basic_string<char> >' has no member named 'front'
+      // [Error] 'class std::set<std::basic_string<char> >' has no member named 'pop_front'
       */
     }
 
-    //! queue<string, map<string>> c5;	//以 map 為底層, [Error] template argument 2 is invalid
-    //! queue<string>::iterator ite1;  	//[Error] 'iterator' is not a member of 'std::queue<std::basic_string<char> >'	
+    // ! queue<string, map<string>> c5;	// 以 map 為底層, [Error] template argument 2 is invalid
+    // ! queue<string>::iterator ite1;  	// [Error] 'iterator' is not a member of 'std::queue<std::basic_string<char> >'	
   }
 }
-//---------------------------------------------------
+
+// ---------------------------------------------------
 #include <list>
 #include <stdexcept>
 #include <string>
-#include <cstdlib> 		//abort()
-#include <cstdio>  		//snprintf()
-#include <algorithm> 	//find()
+#include <cstdlib> 		// abort()
+#include <cstdio>  		// snprintf()
+#include <algorithm> 	// find()
 #include <iostream>
 #include <ctime> 
 
 #include <cstddef>
-#include <memory>	//內含 std::allocator  
-  //欲使用 std::allocator 以外的 allocator, 得自行 #include <ext\...> 
+#include <memory>	// 內含 std::allocator  
+  // 欲使用 std::allocator 以外的 allocator, 得自行 #include <ext\...> 
 #ifdef __GNUC__		
 #include <ext\array_allocator.h>
 #include <ext\mt_allocator.h>
@@ -1408,23 +1419,23 @@ namespace jj18
 
 namespace jj20
 {
-  //pass A object to function template impl()，
-  //而 A 本身是個 class template, 帶有 type parameter T,  
-  //那麼有無可能在 impl() 中抓出 T, 創建一個 list<T, A<T>> object? 
-  //以下先暫時迴避上述疑問.
+  // pass A object to function template impl()，
+  // 而 A 本身是個 class template, 帶有 type parameter T,  
+  // 那麼有無可能在 impl() 中抓出 T, 創建一個 list<T, A<T>> object? 
+  // 以下先暫時迴避上述疑問.
 
   void test_list_with_special_allocator()
   {
 #ifdef __GNUC__	
     cout << "\ntest_list_with_special_allocator().......... \n";
 
-    //不能在 switch case 中宣告，只好下面這樣. 				//1000000次 
-    list<string, allocator<string>> c1;						//3140
-    list<string, __gnu_cxx::malloc_allocator<string>> c2;  	//3110
-    list<string, __gnu_cxx::new_allocator<string>> c3; 		//3156
-    list<string, __gnu_cxx::__pool_alloc<string>> c4;  		//4922
-    list<string, __gnu_cxx::__mt_alloc<string>> c5; 		//3297
-    list<string, __gnu_cxx::bitmap_allocator<string>> c6;  	//4781 														
+    // 不能在 switch case 中宣告，只好下面這樣. 				// 1000000次 
+    list<string, allocator<string>> c1;						// 3140
+    list<string, __gnu_cxx::malloc_allocator<string>> c2;  	// 3110
+    list<string, __gnu_cxx::new_allocator<string>> c3; 		// 3156
+    list<string, __gnu_cxx::__pool_alloc<string>> c4;  		// 4922
+    list<string, __gnu_cxx::__mt_alloc<string>> c5; 		// 3297
+    list<string, __gnu_cxx::bitmap_allocator<string>> c6;  	// 4781 														
 
     int choice;
     long value;
@@ -1475,7 +1486,7 @@ namespace jj20
     cout << "a lot of push_back(), milli-seconds : " << (clock() - timeStart) << endl;
 
 
-    //test all allocators' allocate() & deallocate();
+    // test all allocators' allocate() & deallocate();
     int* p;
     allocator<int> alloc1;
     p = alloc1.allocate(1);
@@ -1491,7 +1502,7 @@ namespace jj20
 
     __gnu_cxx::__pool_alloc<int> alloc4;
     p = alloc4.allocate(2);
-    alloc4.deallocate(p, 2); 	//我刻意令參數為 2, 但這有何意義!! 一次要 2 個 ints? 
+    alloc4.deallocate(p, 2); 	// 我刻意令參數為 2, 但這有何意義!! 一次要 2 個 ints? 
 
     __gnu_cxx::__mt_alloc<int> alloc5;
     p = alloc5.allocate(1);
@@ -1499,26 +1510,27 @@ namespace jj20
 
     __gnu_cxx::bitmap_allocator<int> alloc6;
     p = alloc6.allocate(3);
-    alloc6.deallocate(p, 3);  	//我刻意令參數為 3, 但這有何意義!! 一次要 3 個 ints? 
+    alloc6.deallocate(p, 3);  	// 我刻意令參數為 3, 但這有何意義!! 一次要 3 個 ints? 
 #endif 			
   }
 }
-//---------------------------------------------------
+
+// ---------------------------------------------------
 #include <list>
 #include <string>
 #include <iostream>
 
-#include <memory>		//內含 std::allocator  
-//#include <bits\stl_tree.h>  //內含 _RB_tree (不需此行, 因為它被含入於 <set> and <map>)
+#include <memory>		// 內含 std::allocator  
+// #include <bits\stl_tree.h>  // 內含 _RB_tree (不需此行, 因為它被含入於 <set> and <map>)
 
-//欲使用 std::allocator 以外的 allocator, 得自行 #include <ext\...> 
-//#include <ext\array_allocator.h>
-//#include <ext\mt_allocator.h>
-//#include <ext\debug_allocator.h>
-//#include <ext\pool_allocator.h>
-//#include <ext\bitmap_allocator.h>
-//#include <ext\malloc_allocator.h>
-//#include <ext\new_allocator.h>  
+// 欲使用 std::allocator 以外的 allocator, 得自行 #include <ext\...> 
+// #include <ext\array_allocator.h>
+// #include <ext\mt_allocator.h>
+// #include <ext\debug_allocator.h>
+// #include <ext\pool_allocator.h>
+// #include <ext\bitmap_allocator.h>
+// #include <ext\malloc_allocator.h>
+// #include <ext\new_allocator.h>  
 
 namespace jj25
 {
@@ -1526,55 +1538,56 @@ namespace jj25
   {
     cout << "\ntest_components_size().......... \n";
 
-  //  //containers
-  //  cout << "sizeof(array<int,100>)= " << sizeof(array<int, 100>) << endl;		//400
-  //  cout << "sizeof(vector<int>)= " << sizeof(vector<int>) << endl;				//12
-  //  cout << "sizeof(list<int>)= " << sizeof(list<int>) << endl;					//8
-  //  cout << "sizeof(forward_list<int>)= " << sizeof(forward_list<int>) << endl;	//4
-  //  cout << "sizeof(deque<int>)= " << sizeof(deque<int>) << endl;				//40
-  //  cout << "sizeof(stack<int>)= " << sizeof(stack<int>) << endl;				//40
-  //  cout << "sizeof(queue<int>)= " << sizeof(queue<int>) << endl;				//40
-  //  cout << "sizeof(set<int>)= " << sizeof(set<int>) << endl;					//24
-  //  cout << "sizeof(map<int,int>)= " << sizeof(map<int, int>) << endl;			//24
-  //  cout << "sizeof(multiset<int>)= " << sizeof(multiset<int>) << endl;			//24
-  //  cout << "sizeof(multimap<int,int>)= " << sizeof(multimap<int, int>) << endl;	//24
-  //  cout << "sizeof(unordered_set<int>)= " << sizeof(unordered_set<int>) << endl;					//28
-  //  cout << "sizeof(unordered_map<int,int>)= " << sizeof(unordered_map<int, int>) << endl;			//28	
-  //  cout << "sizeof(unordered_multiset<int>)= " << sizeof(unordered_multiset<int>) << endl;			//28
-  //  cout << "sizeof(unordered_multimap<int,int>)= " << sizeof(unordered_multimap<int, int>) << endl;	//28
-  //  cout << "sizeof(_Rb_tree<...>)= " << sizeof(_Rb_tree<int, int, _Identity<int>, less<int>>) << endl; //24
+  //  // containers
+  //  cout << "sizeof(array<int,100>)= " << sizeof(array<int, 100>) << endl;		// 400
+  //  cout << "sizeof(vector<int>)= " << sizeof(vector<int>) << endl;				// 12
+  //  cout << "sizeof(list<int>)= " << sizeof(list<int>) << endl;					// 8
+  //  cout << "sizeof(forward_list<int>)= " << sizeof(forward_list<int>) << endl;	// 4
+  //  cout << "sizeof(deque<int>)= " << sizeof(deque<int>) << endl;				// 40
+  //  cout << "sizeof(stack<int>)= " << sizeof(stack<int>) << endl;				// 40
+  //  cout << "sizeof(queue<int>)= " << sizeof(queue<int>) << endl;				// 40
+  //  cout << "sizeof(set<int>)= " << sizeof(set<int>) << endl;					// 24
+  //  cout << "sizeof(map<int,int>)= " << sizeof(map<int, int>) << endl;			// 24
+  //  cout << "sizeof(multiset<int>)= " << sizeof(multiset<int>) << endl;			// 24
+  //  cout << "sizeof(multimap<int,int>)= " << sizeof(multimap<int, int>) << endl;	// 24
+  //  cout << "sizeof(unordered_set<int>)= " << sizeof(unordered_set<int>) << endl;					// 28
+  //  cout << "sizeof(unordered_map<int,int>)= " << sizeof(unordered_map<int, int>) << endl;			// 28	
+  //  cout << "sizeof(unordered_multiset<int>)= " << sizeof(unordered_multiset<int>) << endl;			// 28
+  //  cout << "sizeof(unordered_multimap<int,int>)= " << sizeof(unordered_multimap<int, int>) << endl;	// 28
+  //  cout << "sizeof(_Rb_tree<...>)= " << sizeof(_Rb_tree<int, int, _Identity<int>, less<int>>) << endl; // 24
 
-  //  //iterators
-  //  cout << "sizeof(array<int,100>::iterator)= " << sizeof(array<int, 100>::iterator) << endl;		//4
-  //  cout << "sizeof(vector<int>::iterator)= " << sizeof(vector<int>::iterator) << endl;				//4
-  //  cout << "sizeof(list<int>::iterator)= " << sizeof(list<int>::iterator) << endl;					//4
-  //  cout << "sizeof(forward_list<int>::iterator)= " << sizeof(forward_list<int>::iterator) << endl; //4
-  //  cout << "sizeof(deque<int>::iterator)= " << sizeof(deque<int>::iterator) << endl;				//16
-  //  //! cout << "sizeof(stack<int>::iterator)= " << sizeof(stack<int>::iterator) << endl;	//[Error] 'iterator' is not a member of 'std::stack<int>'		
-  //  //! cout << "sizeof(queue<int>::iterator)= " << sizeof(queue<int>::iterator) << endl;	//[Error] 'iterator' is not a member of 'std::queue<int>			
-  //  cout << "sizeof(set<int>::iterator)= " << sizeof(set<int>::iterator) << endl;					//4
-  //  cout << "sizeof(map<int,int>::iterator)= " << sizeof(map<int, int>::iterator) << endl;			//4
-  //  cout << "sizeof(multiset<int>::iterator)= " << sizeof(multiset<int>::iterator) << endl;			//4
-  //  cout << "sizeof(multimap<int,int>::iterator)= " << sizeof(multimap<int, int>::iterator) << endl;	//4
-  //  cout << "sizeof(unordered_set<int>::iterator)= " << sizeof(unordered_set<int>::iterator) << endl;	//4	
-  //  cout << "sizeof(unordered_map<int,int>::iterator)= " << sizeof(unordered_map<int, int>::iterator) << endl;	//4	
-  //  cout << "sizeof(unordered_multiset<int>::iterator)= " << sizeof(unordered_multiset<int>::iterator) << endl;	//4
-  //  cout << "sizeof(unordered_multimap<int,int>::iterator)= " << sizeof(unordered_multimap<int, int>::iterator) << endl;	//4										
-  //  cout << "sizeof(_Rb_tree<...>::iterator)= " << sizeof(_Rb_tree<int, int, _Identity<int>, less<int>>::iterator) << endl; //4
+  //  // iterators
+  //  cout << "sizeof(array<int,100>::iterator)= " << sizeof(array<int, 100>::iterator) << endl;		// 4
+  //  cout << "sizeof(vector<int>::iterator)= " << sizeof(vector<int>::iterator) << endl;				// 4
+  //  cout << "sizeof(list<int>::iterator)= " << sizeof(list<int>::iterator) << endl;					// 4
+  //  cout << "sizeof(forward_list<int>::iterator)= " << sizeof(forward_list<int>::iterator) << endl; // 4
+  //  cout << "sizeof(deque<int>::iterator)= " << sizeof(deque<int>::iterator) << endl;				// 16
+  //  // ! cout << "sizeof(stack<int>::iterator)= " << sizeof(stack<int>::iterator) << endl;	// [Error] 'iterator' is not a member of 'std::stack<int>'		
+  //  // ! cout << "sizeof(queue<int>::iterator)= " << sizeof(queue<int>::iterator) << endl;	// [Error] 'iterator' is not a member of 'std::queue<int>			
+  //  cout << "sizeof(set<int>::iterator)= " << sizeof(set<int>::iterator) << endl;					// 4
+  //  cout << "sizeof(map<int,int>::iterator)= " << sizeof(map<int, int>::iterator) << endl;			// 4
+  //  cout << "sizeof(multiset<int>::iterator)= " << sizeof(multiset<int>::iterator) << endl;			// 4
+  //  cout << "sizeof(multimap<int,int>::iterator)= " << sizeof(multimap<int, int>::iterator) << endl;	// 4
+  //  cout << "sizeof(unordered_set<int>::iterator)= " << sizeof(unordered_set<int>::iterator) << endl;	// 4	
+  //  cout << "sizeof(unordered_map<int,int>::iterator)= " << sizeof(unordered_map<int, int>::iterator) << endl;	// 4	
+  //  cout << "sizeof(unordered_multiset<int>::iterator)= " << sizeof(unordered_multiset<int>::iterator) << endl;	// 4
+  //  cout << "sizeof(unordered_multimap<int,int>::iterator)= " << sizeof(unordered_multimap<int, int>::iterator) << endl;	// 4										
+  //  cout << "sizeof(_Rb_tree<...>::iterator)= " << sizeof(_Rb_tree<int, int, _Identity<int>, less<int>>::iterator) << endl; // 4
 
-  //  //allocators
-  //  cout << "sizeof(      std::allocator<string>)=" << sizeof(std::allocator<string>) << endl;						//1 (理論值 0)
-  //  cout << "sizeof(__gnu_cxx::malloc_allocator<string>)= " << sizeof(__gnu_cxx::malloc_allocator<string>) << endl; //1 (理論值 0) 
-  //  cout << "sizeof(__gnu_cxx::new_allocator<string>)= " << sizeof(__gnu_cxx::new_allocator<string>) << endl; 	    //1 (理論值 0)
-  //  cout << "sizeof(__gnu_cxx::__pool_alloc<string>)= " << sizeof(__gnu_cxx::__pool_alloc<string>) << endl;         //1 (理論值 0)
-  //  cout << "sizeof(__gnu_cxx::bitmap_allocator<string>)= " << sizeof(__gnu_cxx::bitmap_allocator<string>) << endl; //1 (理論值 0)
-  //  cout << "sizeof(__gnu_cxx::__mt_alloc<string>)= " << sizeof(__gnu_cxx::__mt_alloc<string>) << endl;  			//1 (理論值 0)
-  //  cout << "sizeof(__gnu_cxx::array_allocator<int>)= " << sizeof(__gnu_cxx::array_allocator<int>) << endl;  		//8
-  //                                //==> 因為它有一個 ptr 指向 array 和一個 size_t 表示消耗到 array 哪兒 
-  //  cout << "sizeof(__gnu_cxx::debug_allocator<std::allocator<double>>)= " << sizeof(__gnu_cxx::debug_allocator<std::allocator<double>>) << endl; //8 	
+  //  // allocators
+  //  cout << "sizeof(      std::allocator<string>)=" << sizeof(std::allocator<string>) << endl;						// 1 (理論值 0)
+  //  cout << "sizeof(__gnu_cxx::malloc_allocator<string>)= " << sizeof(__gnu_cxx::malloc_allocator<string>) << endl; // 1 (理論值 0) 
+  //  cout << "sizeof(__gnu_cxx::new_allocator<string>)= " << sizeof(__gnu_cxx::new_allocator<string>) << endl; 	    // 1 (理論值 0)
+  //  cout << "sizeof(__gnu_cxx::__pool_alloc<string>)= " << sizeof(__gnu_cxx::__pool_alloc<string>) << endl;         // 1 (理論值 0)
+  //  cout << "sizeof(__gnu_cxx::bitmap_allocator<string>)= " << sizeof(__gnu_cxx::bitmap_allocator<string>) << endl; // 1 (理論值 0)
+  //  cout << "sizeof(__gnu_cxx::__mt_alloc<string>)= " << sizeof(__gnu_cxx::__mt_alloc<string>) << endl;  			// 1 (理論值 0)
+  //  cout << "sizeof(__gnu_cxx::array_allocator<int>)= " << sizeof(__gnu_cxx::array_allocator<int>) << endl;  		// 8
+  //                                // ==> 因為它有一個 ptr 指向 array 和一個 size_t 表示消耗到 array 哪兒 
+  //  cout << "sizeof(__gnu_cxx::debug_allocator<std::allocator<double>>)= " << sizeof(__gnu_cxx::debug_allocator<std::allocator<double>>) << endl; // 8 	
   }
 }
-//---------------------------------------------------
+
+// ---------------------------------------------------
 #include <vector>
 #include <algorithm>
 #include <functional>
@@ -1589,11 +1602,12 @@ namespace jj30
     vector<int, allocator<int>> vi(ia, ia + 7);
 
     cout << count_if(vi.begin(), vi.end(),
-      not1(bind2nd(less<int>(), 40)));	//5
+      not1(bind2nd(less<int>(), 40)));	// 5
     cout << endl;
   }
 }
-//---------------------------------------------------
+
+// ---------------------------------------------------
 #include <set>
 #include <functional>
 #include <iostream>
@@ -1601,35 +1615,36 @@ namespace jj31
 {
   void test_Rb_tree()
   {
-    //G2.9 vs. G2.9 : 
-      //rb_tree => _Rb_tree, 
-      //identity<> => _Identity<>
-      //insert_unique() => _M_insert_unique()
-      //insert_equal() => _M_insert_equal()
+    // G2.9 vs. G2.9 : 
+      // rb_tree => _Rb_tree, 
+      // identity<> => _Identity<>
+      // insert_unique() => _M_insert_unique()
+      // insert_equal() => _M_insert_equal()
 
     cout << "\ntest_Rb_tree().......... \n";
 
-    //_Rb_tree<int, int, _Identity<int>, less<int>> itree;
-    //cout << itree.empty() << endl;  //1
-    //cout << itree.size() << endl;   //0
+    // _Rb_tree<int, int, _Identity<int>, less<int>> itree;
+    // cout << itree.empty() << endl;  // 1
+    // cout << itree.size() << endl;   // 0
 
-    //itree._M_insert_unique(3);
-    //itree._M_insert_unique(8);
-    //itree._M_insert_unique(5);
-    //itree._M_insert_unique(9);
-    //itree._M_insert_unique(13);
-    //itree._M_insert_unique(5);  //no effect, since using insert_unique().
-    //cout << itree.empty() << endl;  //0
-    //cout << itree.size() << endl;   //5
-    //cout << itree.count(5) << endl; //1
+    // itree._M_insert_unique(3);
+    // itree._M_insert_unique(8);
+    // itree._M_insert_unique(5);
+    // itree._M_insert_unique(9);
+    // itree._M_insert_unique(13);
+    // itree._M_insert_unique(5);  // no effect, since using insert_unique().
+    // cout << itree.empty() << endl;  // 0
+    // cout << itree.size() << endl;   // 5
+    // cout << itree.count(5) << endl; // 1
 
-    //itree._M_insert_equal(5);
-    //itree._M_insert_equal(5);
-    //cout << itree.size() << endl;   //7, since using insert_equal().
-    //cout << itree.count(5) << endl; //3       
+    // itree._M_insert_equal(5);
+    // itree._M_insert_equal(5);
+    // cout << itree.size() << endl;   // 7, since using insert_equal().
+    // cout << itree.count(5) << endl; // 3       
   }
 }
-//---------------------------------------------------
+
+// ---------------------------------------------------
 #include <unordered_set>
 #include <functional>
 #include <iostream>
@@ -1637,7 +1652,7 @@ namespace jj31
 namespace jj32
 {
   /*
-  //下面的 hash<string>, G2.9需要，G4.9不需要，因為 G4.9 basic_string.h 已提供
+  // 下面的 hash<string>, G2.9需要，G4.9不需要，因為 G4.9 basic_string.h 已提供
   template<> struct hash<string>
   {
     size_t operator()(string s) const {
@@ -1654,7 +1669,8 @@ namespace jj32
     // 所以 G2.9的應用修改起來很麻煩。不改了, 以後再說. 	    
   }
 }
-//---------------------------------------------------
+
+// ---------------------------------------------------
 #include <iostream>     // std::cout
 #include <iterator>     // std::iterator_traits
 #include <typeinfo>     // typeid
@@ -1688,10 +1704,10 @@ namespace jj33
     _display_category(cagy);
 
     cout << "typeid(itr).name()= " << typeid(itr).name() << endl << endl;
-    //The output depends on library implementation.
-    //The particular representation pointed by the  
-  //returned valueis implementation-defined, 
-  //and may or may not be different for different types.   
+    // The output depends on library implementation.
+    // The particular representation pointed by the  
+  // returned valueis implementation-defined, 
+  // and may or may not be different for different types.   
   }
 
   void test_iterator_category()
@@ -1717,7 +1733,8 @@ namespace jj33
     display_category(ostream_iterator<int>(cout, ""));
   }
 }
-//---------------------------------------------------
+
+// ---------------------------------------------------
 #include <iostream>     // std::cout
 #include <functional>   // std::minus
 #include <numeric>      // std::accumulate
@@ -1736,23 +1753,24 @@ namespace jj34
     int nums[] = { 10,20,30 };
 
     cout << "using default accumulate: ";
-    cout << accumulate(nums, nums + 3, init);  //160
+    cout << accumulate(nums, nums + 3, init);  // 160
     cout << '\n';
 
     cout << "using functional's minus: ";
-    cout << accumulate(nums, nums + 3, init, minus<int>()); //40
+    cout << accumulate(nums, nums + 3, init, minus<int>()); // 40
     cout << '\n';
 
     cout << "using custom function: ";
-    cout << accumulate(nums, nums + 3, init, myfunc);	//220
+    cout << accumulate(nums, nums + 3, init, myfunc);	// 220
     cout << '\n';
 
     cout << "using custom object: ";
-    cout << accumulate(nums, nums + 3, init, myobj);	//280
+    cout << accumulate(nums, nums + 3, init, myobj);	// 280
     cout << '\n';
   }
 }
-//---------------------------------------------------
+
+// ---------------------------------------------------
 #include <iostream>     // std::cout
 #include <algorithm>    // std::for_each
 #include <vector>       // std::vector
@@ -1776,20 +1794,21 @@ namespace jj35
     myvec.push_back(30);
 
     for_each(myvec.begin(), myvec.end(), myfunc);
-    cout << endl;		//output: 10 20 30
+    cout << endl;		// output: 10 20 30
 
     for_each(myvec.begin(), myvec.end(), myobj);
-    cout << endl;		//output: 10 20 30
+    cout << endl;		// output: 10 20 30
 
-    //since C++11, range-based for- statement
+    // since C++11, range-based for- statement
     for (auto& elem : myvec)
       elem += 5;
 
     for (auto elem : myvec)
-      cout << ' ' << elem; 	//output: 15 25 35
+      cout << ' ' << elem; 	// output: 15 25 35
   }
 }
-//---------------------------------------------------
+
+// ---------------------------------------------------
 #include <iostream>     // std::cout
 #include <algorithm>    // std::sort
 #include <vector>       // std::vector
@@ -1809,48 +1828,49 @@ namespace jj36
     vector<int> myvec(myints, myints + 8);          // 32 71 12 45 26 80 53 33
 
     // using default comparison (operator <):
-    sort(myvec.begin(), myvec.begin() + 4);         //(12 32 45 71)26 80 53 33
+    sort(myvec.begin(), myvec.begin() + 4);         // (12 32 45 71)26 80 53 33
 
     // using function as comp
     sort(myvec.begin() + 4, myvec.end(), myfunc); 	// 12 32 45 71(26 33 53 80)
 
     // using object as comp
-    sort(myvec.begin(), myvec.end(), myobj);      //(12 26 32 33 45 53 71 80)
+    sort(myvec.begin(), myvec.end(), myobj);      // (12 26 32 33 45 53 71 80)
 
     // print out content:
     cout << "\nmyvec contains:";
-    for (auto elem : myvec)		//C++11 range-based for statement
-      cout << ' ' << elem; 	//output: 12 26 32 33 45 53 71 80
+    for (auto elem : myvec)		// C++11 range-based for statement
+      cout << ' ' << elem; 	// output: 12 26 32 33 45 53 71 80
 
  // using reverse iterators and default comparison (operator <):
     sort(myvec.rbegin(), myvec.rend());
 
     // print out content:
     cout << "\nmyvec contains:";
-    for (auto elem : myvec)		//C++11 range-based for statement
-      cout << ' ' << elem; 	//output: 80 71 53 45 33 32 26 12    
+    for (auto elem : myvec)		// C++11 range-based for statement
+      cout << ' ' << elem; 	// output: 80 71 53 45 33 32 26 12    
 
  // using explicitly default comparison (operator <):
     sort(myvec.begin(), myvec.end(), less<int>());
 
     // print out content:
     cout << "\nmyvec contains:";
-    for (auto elem : myvec)		//C++11 range-based for statement
-      cout << ' ' << elem; 	//output: 12 26 32 33 45 53 71 80   
+    for (auto elem : myvec)		// C++11 range-based for statement
+      cout << ' ' << elem; 	// output: 12 26 32 33 45 53 71 80   
 
  // using another comparision criteria (operator >):
     sort(myvec.begin(), myvec.end(), greater<int>());
 
     // print out content:
     cout << "\nmyvec contains:";
-    for (auto elem : myvec)		//C++11 range-based for statement
-      cout << ' ' << elem; 	//output: 80 71 53 45 33 32 26 12 	   
+    for (auto elem : myvec)		// C++11 range-based for statement
+      cout << ' ' << elem; 	// output: 80 71 53 45 33 32 26 12 	   
 
     return true;
   }
 }
-//---------------------------------------------------
-#include <cstdlib> //rand() and RAND_MAX
+
+// ---------------------------------------------------
+#include <cstdlib> // rand() and RAND_MAX
 namespace jjxx
 {
   void test_containers()
@@ -1868,7 +1888,7 @@ namespace jjxx
     cout << "       (16)unordered_map (17)stack (18)queue \n";
     cout << " (2),(3),(5),(6),(8) will test also moveable elements. \n";
     cin >> choice;
-    if (choice != 1) { 	//1 ==> array, use ASIZE
+    if (choice != 1) { 	// 1 ==> array, use ASIZE
       cout << "how many elements: ";
       cin >> value;
     }
@@ -1878,7 +1898,7 @@ namespace jjxx
     case 1: 	jj01::test_array();
       break;
     case 2: 	jj02::test_vector(value);
-      //jj02::test_vector_with_move(value);	
+      // jj02::test_vector_with_move(value);	
       break;
     case 3: 	jj03::test_list(value);
       break;
@@ -1917,8 +1937,9 @@ namespace jjxx
     }
   }
 }
-//---------------------------------------------------
-#include <cstdlib> //rand() and RAND_MAX
+
+// ---------------------------------------------------
+#include <cstdlib> // rand() and RAND_MAX
 int main(int argc, char** argv)
 {
   jj00::test_misc();

@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="move_aware.cpp">
+    <ClCompile Include="new_features.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
