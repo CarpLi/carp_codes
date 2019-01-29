@@ -302,7 +302,8 @@ void test_moveable(M c1, NM c2, long& value)
 
   // 測試 move 
   cout << "\n\ntest, with moveable elements" << endl;
-  typedef typename iterator_traits<typename M::iterator>::value_type V1type;
+  //typedef typename iterator_traits<typename M::iterator>::value_type V1type;
+  using V1type = typename iterator_traits<typename M::iterator>::value_type;
   clock_t timeStart = clock();
   for (long i = 0; i < value; ++i)
   {
